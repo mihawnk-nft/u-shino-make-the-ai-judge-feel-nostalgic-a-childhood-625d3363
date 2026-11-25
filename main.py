@@ -26,9 +26,14 @@ def validate(text: str) -> None:
     """Check the entry the gate checks: 1 sentence, 1-280 chars, not blank."""
     assert text.strip() == text, "leading/trailing whitespace"
     assert text.strip(), "entry must not be only white space"
+    assert "\n" not in text and "\r" not in text, "entry must be a single line"
+    assert "  " not in text, "no double spaces"
     assert 1 <= len(text) <= 280, f"{len(text)} characters, must be 1-280"
     assert text.count(".") == 1 and text.endswith("."), (
         f"entry must be exactly one sentence: {text!r}"
+    )
+    assert "!" not in text and "?" not in text, (
+        "entry must have exactly one sentence terminator"
     )
     text.encode("utf-8")  # gate requires valid UTF-8
 
@@ -38,6 +43,7 @@ def main() -> None:
     os.makedirs("/output", exist_ok=True)
     with open("/output/entry.txt", "w", encoding="utf-8") as f:
         f.write(ENTRY)
+    print(f"wrote /output/entry.txt ({len(ENTRY)} characters, 1 sentence)")
 
 
 if __name__ == "__main__":
